@@ -15,7 +15,7 @@ txdb = TxDb.Mmusculus.UCSC.mm10.knownGene  #Reference for annotation
 
 peaks= readPeakFile(files[[4]], as = "GRanges", header=FALSE)
 colnames(mcols(peaks))=c("id", "score", "pileup_heigth", "fold_change", "-log10(pvalue)", "-log10(qvalue)", "summit_position_to_peak_start") 
-#covplot(peaks, weightCol = "score")
+
 
 #Profile of ChIP binding to TSS regions
 
@@ -34,25 +34,21 @@ peakAnno = annotatePeak(peaks, tssRegion = c(-3000, 3000), TxDb = txdb,
                         genomicAnnotationPriority = c("Promoter", "5UTR", "3UTR", "Exon", "Intron","Downstream", "Intergenic"), 
                         annoDb="org.Mm.eg.db", verbose = TRUE)
 
-write.table(peakAnno, file = "peakAnno_srr24.txt")
+write.table(peakAnno, file = "peakAnno.txt")
 
-#source("/home/damiendsl/Rscripts/convert_tojson.R")
+#Choose the right genome
 require('BSgenome')
 require("BSgenome.Mmusculus.UCSC.mm10")
-df_peakAnno=read.table('peakAnno_srr24.txt')
+df_peakAnno=read.table('peakAnno.txt')
 
 #load table containing Macs statistics
 #macs_stats=read.table(files[[5]], skip=23, header=TRUE)
 
 #creation of metadata fields
-df_peakAnno$sample <- rep("SRR2124924",nrow(df_peakAnno)) 
-df_peakAnno$type_experiment <- rep("ChIP-seq",nrow(df_peakAnno))
-df_peakAnno$TF_study <- rep("Hnf1b",nrow(df_peakAnno)) 
-df_peakAnno$replicate <- rep(1,nrow(df_peakAnno)) 
-
-#df = merge(df_peakAnno, macs_stats)
-#write.csv(df, 'df.csv')
-#write.csv(df_peakAnno, 'peakAnno.csv')
+df_peakAnno$sample <- rep("sample_name",nrow(df_peakAnno)) 
+df_peakAnno$type_experiment <- rep("type_exp",nrow(df_peakAnno))
+df_peakAnno$TF_study <- rep("TF",nrow(df_peakAnno)) 
+df_peakAnno$replicate <- rep(num_rep,nrow(df_peakAnno)) 
 
 #Finding DNA sequences corresponding to window
 genome = BSgenome.Mmusculus.UCSC.mm10
