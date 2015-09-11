@@ -1,0 +1,24 @@
+curl -XPUT localhost:9200/chip/ -d'
+{
+    "settings": {
+        "analysis": {
+            "filter": {
+                "10gram_filter": { 
+                    "type":     "ngram",
+                    "min_gram": 10,
+                    "max_gram": 10
+                }
+            },
+            "analyzer": {
+                "10grams": {
+                    "type":      "custom",
+                    "tokenizer": "standard",
+                    "filter": [
+                        "lowercase",
+                        "10gram_filter" 
+                    ]
+                }
+            }
+        }
+    }
+}'
